@@ -10,10 +10,10 @@
     <script>
       var canvas = document.getElementById('canvas');
       var ctx = canvas.getContext("2d");
-      var box = 32;
-      var char = {size:30,x:0,y:0};
-      var widthInBoxes = 20;
-      var heightInBoxes = 20;
+      var box = 40;
+      var char = {size:38,x:0,y:0};
+      var widthInBoxes = 15;
+      var heightInBoxes = 15;
       var blocks = [];
       var direction = "none";
       var moving = false;
@@ -58,6 +58,7 @@
       }
       var run = function(){
         createMap();
+        createIndestructable();
         drawField();
         drawChar();
         moveChar();
@@ -71,7 +72,6 @@
             else if(blocks[i].type == "destructable") ctx.fillStyle = "grey";
             else if(blocks[i].type == "indestructable") ctx.fillStyle = "black";
             ctx.fillRect(blocks[i].x, blocks[i].y, box, box);
-            ctx.strokeRect(blocks[i].x, blocks[i].y, box, box);
           }
       }
 
@@ -79,7 +79,7 @@
         var length = widthInBoxes * heightInBoxes;
         for (var i = 0; i < heightInBoxes; i++) {
           for (var n = 0; n< widthInBoxes; n++) {
-            blocks.push({x:n*32, y:i*32, type:"destructable"})
+            blocks.push({x:n*box, y:i*box, type:"destructable"})
           }
         }
       }
@@ -88,10 +88,16 @@
         blocks[0].type = "normal";
         blocks[1].type = "normal";
         blocks[2].type = "normal";
-        blocks[20].type = "normal";
-        blocks[21].type = "normal";
-        blocks[22].type = "normal";
+        blocks[15].type = "normal";
+        blocks[16].type = "normal";
+        blocks[17].type = "normal";
         blocks[23].type = "indestructable";
+      }
+
+      var createIndestructable = function(){
+        for (var i = 0; i < blocks.length; i++) {
+
+        }
       }
 
       var drawChar = function(){
@@ -119,7 +125,7 @@
         var checkCollision = function(bombX,bombY){
           for (var i = 0; i < blocks.length; i++) {
             if(blocks[i].type == "indestructable" || blocks[i].type == "destructable"){
-                if(collision({x:bombX,y:bombY,width:32,height:32},{x:blocks[i].x,y:blocks[i].y,width:32,height:32})){
+                if(collision({x:bombX,y:bombY,width:char.size,height:char.size},{x:blocks[i].x,y:blocks[i].y,width:box,height:box})){
                   return true;
               }
             }
@@ -144,13 +150,16 @@
           if(d=="down") bombY += 2;
 
 
-          if(!checkCollision(bombX,bombY) && !wrapper(bombX,bombY,32,32)){
+          if(!checkCollision(bombX,bombY) && !wrapper(bombX,bombY,box,box)){
             char.x = bombX;
             char.y = bombY;
           }
     }
 
-
+      var makeBombs = function(x,y){
+        Math.round(x);
+        Math.round(y);
+      }
 
 
 
