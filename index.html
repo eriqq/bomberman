@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext("2d");
+      var box = 32;
+      var char = {size:30,x:0,y:0};
+      var widthInBoxes = 20;
+      var heightInBoxes = 20;
+      var blocks = [];
+      var block = {x:0,y:0,type:"normal"};
+      var direction = "none";
+      var moving = false;
+      var lastDirection;
+
+      var fps = 60;
+      canvas.width = box * widthInBoxes;
+      canvas.height = box * heightInBoxes;
+
+
+      document.onkeydown = function(e){
+        switch(e.keyCode){
+          case 37:
+          direction = "left";
+          break;
+
+          case 38:
+          direction = "up";
+          break;
+
+          case 39:
+          direction = "right";
+          break;
+
+          case 40:
+          direction = "down";
+          break;
+        }
+      }
+
+      document.onkeyup = function(e){
+        direction = "none";
+
+      }
+
+      var drawModule = (function(){
+
+      var game = function(){
+
+        makeField();
+        setInterval(run,1000/fps);
+      }
+      var run = function(){
+        createDestructable();
+        drawField();
+        drawChar();
+        moveChar();
+
+      }
+
+      var drawField = function (){
+          ctx.strokeStyle = "black";
+          for (var i = 0; i < blocks.length; i++) {
+            if(blocks[i].type == "normal") ctx.fillStyle = "green";
+            else if(blocks[i].type == "destructable") ctx.fillStyle = "grey";
+            ctx.fillRect(blocks[i].x, blocks[i].y, box, box);
+            ctx.strokeRect(blocks[i].x, blocks[i].y, box, box);
+          }
+      }
+
+      var makeField = function(){ // adds number to array
+        var length = widthInBoxes * heightInBoxes;
+        for (var i = 0; i < heightInBoxes; i++) {
+          for (var n = 0; n< widthInBoxes; n++) {
+            blocks.push({x:n*32, y:i*32, type:"normal"})
+          }
+        }
+      }
+
+      var createDestructable = function() {
+        blocks[25].type = "destructable";
+        blocks[26].type = "destructable";
+      }
+
+      var drawChar = function(){
+          ctx.fillStyle = "darkgrey";
+          ctx.fillRect(char.x,char.y,char.size,char.size);
+      }
+
+
+
+
+      var moveChar = function(){ // d == direction
+        if(direction != "none") movement(direction);
+      }
+
+      var collision = function(rect1,rect2) {
+        if (rect1.x < rect2.x + rect2.width &&
+          rect1.x + rect1.width > rect2.x &&
+          rect1.y < rect2.y + rect2.height &&
+          rect1.height + rect1.y > rect2.y) {
+            return true;
+          }
+          return false;
+        }
+
+        var checkCollision = function(bombX,bombY){
+          for (var i = 0; i < blocks.length; i++) {
+            if(blocks[i].type == "indestructable" || blocks[i].type == "destructable"){
+                if(collision({x:bombX,y:bombY,width:32,height:32},{x:blocks[i].x,y:blocks[i].y,width:32,height:32})){
+                  return true;
+              }
+            }
+          }
+      return false;
+        }
+
+      var movement = function(d){
+          var bombX = char.x;
+          var bombY = char.y;
+
+
+          if(d=="left") bombX -=2;
+          if(d=="right") bombX += 2;
+          if(d=="up") bombY -= 2;
+          if(d=="down") bombY += 2;
+
+          if(!checkCollision(bombX,bombY)){
+            char.x = bombX;
+            char.y = bombY;
+          }
+    }
+
+
+
+
+
+
+        return{
+          init: game(),
+        };
+
+      })();
+
+      drawModule.init;
+
+    </script>
+  </body>
+</html>
