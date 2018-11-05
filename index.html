@@ -11,7 +11,7 @@
       var canvas = document.getElementById('canvas');
       var ctx = canvas.getContext("2d");
       var box = 40;
-      var char = {size:38,x:0,y:0};
+      var char = {size:32,x:0,y:0};
       var widthInBoxes = 15;
       var heightInBoxes = 15;
       var blocks = [];
@@ -20,6 +20,7 @@
       var lastDirection;
       var bomb = {active:false,x:0,y:0,size:30}
       var fps = 60;''
+      var explosionStrength = 5;
       canvas.width = box * widthInBoxes;
       canvas.height = box * heightInBoxes;
 
@@ -163,9 +164,23 @@
 
 
           if(!checkCollision(bombX,bombY) && !wrapper(bombX,bombY,box,box)){
+
             char.x = bombX;
             char.y = bombY;
           }
+    }
+
+    var explosion = function(x,y){
+      var es = explosionStrength;
+
+      for (var i = 0; i < blocks.length; i++) {
+        if(collision({x:x,y:y-(box*3),width:36,height:box*es},{x:blocks[i].x,y:blocks[i].y,width:box,height:box})){
+          blocks[i].type = "normal";
+        }
+        if(collision({x:x-(box*3),y:y,width:box*es,height:36},{x:blocks[i].x,y:blocks[i].y,width:box,height:box})){
+          blocks[i].type = "normal";
+        }
+      }
     }
 
       var makeBomb = function(){
@@ -173,14 +188,18 @@
           x = 4;
           y = 4;
 
-          var tempx = char.x % 32;
-          var tempy = char.y % 32;
+          var tempx = char.x % 40;
+          var tempy = char.y % 40;
 
           bomb.x = char.x - tempx+4;
 
           bomb.y = char.y - tempy+4;
           bomb.active = false;
-
+          setTimeout(function(){
+            explosion(bomb.x,bomb.y);
+            bomb.x = -50;
+            bomb.y = -50
+          },2000);
 
       }
 
