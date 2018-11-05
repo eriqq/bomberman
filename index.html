@@ -18,14 +18,18 @@
       var direction = "none";
       var moving = false;
       var lastDirection;
-
-      var fps = 60;
+      var bomb = {active:false,x:0,y:0,size:30}
+      var fps = 60;''
       canvas.width = box * widthInBoxes;
       canvas.height = box * heightInBoxes;
 
 
       document.onkeydown = function(e){
         switch(e.keyCode){
+          case 32:
+          bomb.active = true;
+          break;
+
           case 37:
           direction = "left";
           break;
@@ -41,6 +45,7 @@
           case 40:
           direction = "down";
           break;
+
         }
       }
 
@@ -62,7 +67,8 @@
         drawField();
         drawChar();
         moveChar();
-
+        if(bomb.active) makeBomb();
+        drawBomb();
       }
 
       var drawField = function (){
@@ -103,6 +109,12 @@
       var drawChar = function(){
           ctx.fillStyle = "darkgrey";
           ctx.fillRect(char.x,char.y,char.size,char.size);
+      }
+
+      var drawBomb = function(){
+        console.log(bomb.x);
+        ctx.fillStyle = "blue";
+        ctx.fillRect(bomb.x, bomb.y,30,30);
       }
 
 
@@ -156,9 +168,19 @@
           }
     }
 
-      var makeBombs = function(x,y){
-        Math.round(x);
-        Math.round(y);
+      var makeBomb = function(){
+        console.log("hej");
+        var x,y;
+          x = 4;
+          y = 4;
+          x = 36;
+          y = 36;
+
+          bomb.x = x;
+          bomb.y = y;
+          bomb.active = false;
+
+
       }
 
 
@@ -166,6 +188,7 @@
 
         return{
           init: game(),
+          makeBomb: makeBomb()
         };
 
       })();
