@@ -19,7 +19,10 @@
       var moving = false;
       var lastDirection;
       var bomb = {active:false,x:0,y:0,size:30}
-      var fps = 60;''
+      var fps = 60;
+      var image = new Image(box,box);
+      image.src ="Untitled-12.jpg"
+
       canvas.width = box * widthInBoxes;
       canvas.height = box * heightInBoxes;
 
@@ -74,10 +77,17 @@
       var drawField = function (){
           ctx.strokeStyle = "black";
           for (var i = 0; i < blocks.length; i++) {
-            if(blocks[i].type == "normal") ctx.fillStyle = "green";
-            else if(blocks[i].type == "destructable") ctx.fillStyle = "grey";
-            else if(blocks[i].type == "indestructable") ctx.fillStyle = "black";
-            ctx.fillRect(blocks[i].x, blocks[i].y, box, box);
+            if(blocks[i].type == "normal"){
+              ctx.fillStyle = "green";
+              ctx.drawImage(image,blocks[i].x, blocks[i].y, box, box);
+            }
+            else if(blocks[i].type == "destructable"){
+              ctx.fillStyle = "grey";
+              ctx.fillRect(blocks[i].x, blocks[i].y, box, box);
+            }
+            else if(blocks[i].type == "indestructable"){
+              ctx.fillRect(blocks[i].x, blocks[i].y, box, box);
+            } ctx.fillStyle = "black";
           }
       }
 
@@ -173,8 +183,8 @@
         var x,y;
           x = 4;
           y = 4;
-          x = 36;
-          y = 36;
+          
+
 
           bomb.x = x;
           bomb.y = y;
@@ -182,8 +192,6 @@
 
 
       }
-
-
 
 
         return{
