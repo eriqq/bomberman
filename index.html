@@ -19,8 +19,10 @@
       var moving = false;
       var lastDirection;
       var bomb = {active:false,x:0,y:0,size:30}
-      var fps = 60;''
+      var fps = 60;
       var explosionStrength = 5;
+      var bombAnim = [];
+      var setBomb = false;
       canvas.width = box * widthInBoxes;
       canvas.height = box * heightInBoxes;
 
@@ -62,6 +64,7 @@
         makeField();
         setInterval(run,1000/fps);
       }
+
       var run = function(){
         createMap();
         createIndestructable();
@@ -70,6 +73,7 @@
         moveChar();
         if(bomb.active) makeBomb();
         drawBomb();
+        if(setBomb)drawExplosion();
       }
 
       var drawField = function (){
@@ -115,10 +119,14 @@
       var drawBomb = function(){
         console.log(bomb.x);
         ctx.fillStyle = "blue";
-        ctx.fillRect(bomb.x, bomb.y,30,30);
+        ctx.fillRect(bomb.x,bomb.y,30,30);
       }
 
-
+      var drawExplosion = function(){
+        var es = explosionStrength;
+          ctx.fillStyle = "red";
+          ctx.fillRect(bomb.x,bomb.y-(box*3),36,box*es);
+      }
 
 
       var moveChar = function(){ // d == direction
@@ -172,6 +180,11 @@
 
     var explosion = function(x,y){
       var es = explosionStrength;
+      setBomb = true;
+      setTimeout(function(){
+        setBomb = false;
+      },1000);
+
 
       for (var i = 0; i < blocks.length; i++) {
         if(collision({x:x,y:y-(box*3),width:36,height:box*es},{x:blocks[i].x,y:blocks[i].y,width:box,height:box})){
@@ -191,7 +204,7 @@
           var tempx = char.x % 40;
           var tempy = char.y % 40;
 
-          bomb.x = char.x - tempx+4;
+          bomb.x = char.x - tempx+4; // +4 to get bomb in the middle of square
 
           bomb.y = char.y - tempy+4;
           bomb.active = false;
